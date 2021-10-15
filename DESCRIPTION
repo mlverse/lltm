@@ -1,0 +1,20 @@
+Package: lltm
+Title: Long Long Term Memory Neural Network Cells
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Daniel", "Falbel", email = "daniel@rstudio.com", role = c("aut", "cre", "cph")),
+    person(family = "RStudio", role = c("cph"))
+    )
+Description: Implements the Long Long Term Memory Neural Network Cells ('LLTM').
+    It demonstrates how to implement and distribute 'C++' extensions for 'torch'.
+    Also implements 'JIT' operators for 'torch'.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+LinkingTo: 
+    Rcpp, torch
+Imports: 
+    Rcpp, torch
+Remotes:
+    mlverse/torch@feature/install-headers
