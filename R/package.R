@@ -26,9 +26,9 @@ lib_path <- function() {
 }
 
 lib_ext <- function() {
-  if (grepl(version$os, "darwin"))
+  if (grepl("darwin", version$os))
     ".dylib"
-  else if (grepl(version$os, "linux"))
+  else if (grepl("linux", version$os))
     ".so"
   else
     ".dll"
