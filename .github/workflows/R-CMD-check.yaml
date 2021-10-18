@@ -99,6 +99,7 @@ jobs:
       - uses: r-lib/actions/check-r-package@v1
         with:
           error-on: '"error"'
+          args: "--no-multiarch --no-manual"
 
       - name: Show testthat output
         if: always()
