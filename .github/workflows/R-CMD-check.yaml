@@ -97,6 +97,8 @@ jobs:
           cmake --build . --target package
 
       - uses: r-lib/actions/check-r-package@v1
+        with:
+          error-on: '"error"'
 
       - name: Show testthat output
         if: always()
