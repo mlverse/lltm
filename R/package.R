@@ -5,7 +5,7 @@ NULL
 
 .onLoad <- function(lib, pkg) {
   if (torch::torch_is_installed()) {
-    dyn.load("csrc/build/liblltm.dylib", local = FALSE)
+    dyn.load(lib_path(), local = FALSE)
 
     # when using devtools::load_all() the library might be available in
     # `lib/pkg/src`
@@ -16,3 +16,22 @@ NULL
       library.dynam(pkg, pkg, lib)
   }
 }
+
+lib_path <- function() {
+  if (.Platform$OS.type == "unix") {
+    paste0("csrc/build/liblltm", library_extension())
+  } else {
+    paste0("csrc/build/Release/liblltm", library_extension())
+  }
+}
+
+lib_ext <- function() {
+  if (grepl(version$os, "darwin"))
+    ".dylib"
+  else if (grepl(version$os, "linux"))
+    ".so"
+  else
+    ".dll"
+}
+
+
