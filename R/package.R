@@ -19,9 +19,9 @@ NULL
 
 lib_path <- function() {
   if (.Platform$OS.type == "unix") {
-    paste0("csrc/build/liblltm", library_extension())
+    paste0("csrc/build/liblltm", lib_ext())
   } else {
-    paste0("csrc/build/Release/liblltm", library_extension())
+    paste0("csrc/build/Release/liblltm", lib_ext())
   }
 }
 
