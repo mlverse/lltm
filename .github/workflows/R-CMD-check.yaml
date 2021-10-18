@@ -39,7 +39,7 @@ jobs:
           use-public-rspm: true
 
       - name: Install dependencies
-        run: Rscript -e "install.packages(c('remotes', 'desc'))" -e "remotes::install_deps(dependencies = TRUE)"
+        run: Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE)"
 
       - run: |
           cd csrc
@@ -47,13 +47,13 @@ jobs:
           cmake ..
           cmake --build . --target package
 
-      - uses: softprops/action-gh-release@v1
+      - uses: svenstaro/upload-release-action@v2
         with:
-          files: csrc/build/*.zip
-          name: Liblltm
-          tag_name: liblltm
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: csrc/build/*.zip
+          overwrite: true
+          file_glob: true
+          tag: liblltm
 
 
   R-CMD-check:
@@ -88,7 +88,7 @@ jobs:
 
 
       - run: |
-          Rscript -e "install.packages(c('remotes', 'desc'))" -e "remotes::install_deps(dependencies = TRUE)"
+          Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE)"
 
       - run: |
           cd csrc
