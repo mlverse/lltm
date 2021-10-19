@@ -1,0 +1,3 @@
+PKG_LIBS=\
+	-L../inst/lib \
+  -llltm

@@ -24,6 +24,16 @@ target_include_directories(lltm PUBLIC
 target_link_libraries(lltm "${TORCH_LIBRARIES}")
 set_property(TARGET lltm PROPERTY CXX_STANDARD 14)
 
+
+# If on WIndows we want to copy the .lib file to the package directory
+
+if(WIN32)
+  add_custom_command(TARGET lltm POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_LINKER_FILE:lltm> ${PROJECT_SOURCE_DIR}/../inst/lib/lltm.lib
+      COMMENT "Copied lib file to inst folder."
+  )
+endif()
+
 # Set CPack related code to automatically generate installation bundles.
 
 set(CPACK_GENERATOR ZIP)
