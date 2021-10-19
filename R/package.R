@@ -17,11 +17,24 @@ NULL
   }
 }
 
-lib_path <- function() {
+inst_path <- function() {
+  install_path <- Sys.getenv("LLTM_HOME")
+  if (nzchar(install_path)) return(install_path)
+
   if (.Platform$OS.type == "unix") {
-    paste0("csrc/build/liblltm", lib_ext())
+    paste0("csrc/build/")
   } else {
-    paste0("csrc/build/Debug/lltm", lib_ext())
+    paste0("csrc/build/Debug/")
+  }
+}
+
+lib_path <- function() {
+  install_path <- inst_path()
+
+  if (.Platform$OS.type == "unix") {
+    file.path(install_path, paste0("liblltm", lib_ext()))
+  } else {
+    file.path(install_path, paste0("lltm", lib_ext()))
   }
 }
 
