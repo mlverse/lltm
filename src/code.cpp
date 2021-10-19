@@ -4,6 +4,7 @@
 #include "lltm/lltm.h"
 
 
+
 // [[Rcpp::export]]
 int run () {
   return d_sigmoid(3);

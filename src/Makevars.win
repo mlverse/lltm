@@ -1,12 +1,19 @@
 PKG_LIBS=\
-	-L../inst/lib \
+	-L../lib \
   -llltm
 
-all: $(SHLIB) lltm.lib
+.PHONY: all lltm
+all: clean lltm
 
-lltm.lib:
-	$(DLLTOOL) -d ../inst/def/lltm.def -l ../inst/lib/lltm.lib
+# Creates the import library from the .def file.
+# Keeping the def file in the source folder makes more sense because it's easy
+# to inspect it in version control suystems and it's easier to edit - since it's
+# a plain text file.
+# But MingGW can't take the .def file as an input to the linker, so we need to
+# create the import library.
+lltm: clean
+	$(DLLTOOL) -d ../inst/def/lltm.def -l lltm.lib
 
-$(SHLIB) : lltm.lib
-
+clean:
+	rm -rf lltm.lib
 
