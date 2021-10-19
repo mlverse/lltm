@@ -2,7 +2,7 @@
 #ifndef LLTM_HEADERS_ONLY
 #define LLTM_API extern "C" __declspec(dllexport)
 #else
-#define LLTM_API extern "C"
+#define LLTM_API extern "C" __declspec(dllimport)
 #endif
 #else
 #define LLTM_API extern "C"
