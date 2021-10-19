@@ -1,5 +1,5 @@
 PKG_LIBS=\
-	-L../lib \
+	-L. \
   -llltm
 
 .PHONY: all lltm
