@@ -54,3 +54,6 @@ endif()
 
 install(TARGETS lltm DESTINATION lib)
 include(CPack)
+
+set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/../inst)
+install(TARGETS lltm DESTINATION lib)

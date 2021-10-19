@@ -94,7 +94,8 @@ jobs:
           cd csrc
           mkdir build && cd build
           cmake ..
-          cmake --build . --target package
+          cmake --build .
+          make install
 
       - uses: r-lib/actions/check-r-package@v1
         with:
