@@ -13,6 +13,9 @@ find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 set(LLTM_SRC src/lltm.cpp)
+if(WIN32)
+  set(LLRM_SRC ${LLTM_SRC} lltm.def)
+endif()
 
 add_library(lltm SHARED ${LLTM_SRC})
 add_library(lltm::library ALIAS lltm)
@@ -24,15 +27,15 @@ target_include_directories(lltm PUBLIC
 target_link_libraries(lltm "${TORCH_LIBRARIES}")
 set_property(TARGET lltm PROPERTY CXX_STANDARD 14)
 
+add_custom_command(TARGET lltm POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/lltm.def ${PROJECT_SOURCE_DIR}/../inst/def/lltm.def
+    COMMENT "Copied def file to inst folder."
+)
 
-# If on WIndows we want to copy the .lib file to the package directory
-
-if(WIN32)
-  add_custom_command(TARGET lltm POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_LINKER_FILE:lltm> ${PROJECT_SOURCE_DIR}/../inst/lib/lltm.lib
-      COMMENT "Copied lib file to inst folder."
-  )
-endif()
+add_custom_command(TARGET lltm POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/include/lltm/lltm.h ${PROJECT_SOURCE_DIR}/../src/lltm/lltm.h
+    COMMENT "Copied lltm.h file to src folder."
+)
 
 # Set CPack related code to automatically generate installation bundles.
 

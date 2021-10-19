@@ -1,3 +1,12 @@
 PKG_LIBS=\
 	-L../inst/lib \
   -llltm
+
+all: $(SHLIB) lltm.lib
+
+lltm.lib:
+	$(DLLTOOL) -d ../inst/def/lltm.def -l ../inst/lib/lltm.lib
+
+$(SHLIB) : lltm.lib
+
+

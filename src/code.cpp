@@ -1,7 +1,8 @@
 #include <Rcpp.h>
 #include <iostream>
 #define LLTM_HEADERS_ONLY
-#include "../csrc/include/lltm/lltm.h"
+#include "lltm/lltm.h"
+
 
 // [[Rcpp::export]]
 int run () {
