@@ -94,7 +94,7 @@ get_cmake_style_os <- function() {
   os <- version$os
   if (grepl("darwin", os)) {
     "Darwin"
-  } else if (grepl("linux")) {
+  } else if (grepl("linux", os)) {
     "Linux"
   } else {
     "win64"
