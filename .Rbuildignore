@@ -3,3 +3,4 @@
 ^LICENSE\.md$
 ^\.github$
 ^csrc$
+^inst/lib$

@@ -1,5 +1,6 @@
 ## usethis namespace: start
 #' @importFrom Rcpp sourceCpp
+#' @importFrom utils download.file packageDescription unzip
 ## usethis namespace: end
 NULL
 
@@ -9,9 +10,10 @@ NULL
     if (!lltm_is_installed())
       install_lltm()
 
-    if (!lltm_is_installed())
-      packageStartupMessage("liblltm is not installed. Run `intall_lltm()` before using the package.")
-    else {
+    if (!lltm_is_installed()) {
+      if (interactive())
+        warning("liblltm is not installed. Run `intall_lltm()` before using the package.")
+    } else {
       dyn.load(lib_path(), local = FALSE)
 
       # when using devtools::load_all() the library might be available in
@@ -57,7 +59,7 @@ lltm_is_installed <- function() {
 
 install_lltm <- function(url = Sys.getenv("LLTM_URL", unset = NA)) {
 
-  if (!interactive() && !Sys.getenv("TORCH_INSTALL", 0)) return()
+  if (!interactive() && Sys.getenv("TORCH_INSTALL", unset = 0) == "0") return()
 
   if (is.na(url)) {
     tmp <- tempfile(fileext = ".zip")
