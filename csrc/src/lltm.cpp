@@ -2,11 +2,30 @@
 #include <iostream>
 #include "lltm/lltm.h"
 
-
-LLTM_API int d_sigmoid(int a)
+template <class T>
+class LanternObject
 {
-  auto z = torch::randn({a, a});
-  auto s = torch::sigmoid(z);
-  std::cout << s << std::endl;
-  return 1;
+private:
+  T _object;
+
+public:
+  LanternObject(T object) : _object(std::forward<T>(object))
+  {
+  }
+
+  LanternObject()
+  {
+  }
+
+  T &get()
+  {
+    return _object;
+  }
+};
+
+LLTM_API void* d_sigmoid(void* x)
+{
+  torch::Tensor s = reinterpret_cast<LanternObject<torch::Tensor>*>(x)->get();
+  auto out = torch::sigmoid(s);
+  return (void*) new LanternObject<torch::Tensor>(out);
 }

@@ -2,12 +2,10 @@
 #include <iostream>
 #define LLTM_HEADERS_ONLY
 #include "lltm/lltm.h"
-
-
+#include <torch.h>
 
 // [[Rcpp::export]]
-int run () {
-  return d_sigmoid(3);
+XPtrTorchTensor run (XPtrTorchTensor x) {
+  return d_sigmoid(x.get());
 }
 
-using namespace Rcpp;
