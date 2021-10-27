@@ -95,8 +95,9 @@ jobs:
           mkdir build && cd build
           cmake ..
           cmake --build . --target package
-          Rscript -e "cat('ZIP file:', list.files(pattern='zip'))"
-          Rscript -e "writeLines(paste0('LLTM_URL=',list.files(pattern='zip')), Sys.getenv('GITHUB_ENV'))"
+          Rscript -e "cat('ZIP file:', normalizePath(list.files(pattern='zip', full.names=TRUE)))"
+          Rscript -e "cat('ENV file:', Sys.getenv('GITHUB_ENV'))"
+          Rscript -e "writeLines(paste0('LLTM_URL=',normalizePath(list.files(pattern='zip', full.names=TRUE)), Sys.getenv('GITHUB_ENV'))"
 
       - uses: r-lib/actions/check-r-package@v1
         with:
