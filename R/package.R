@@ -76,6 +76,7 @@ install_lltm <- function(url = Sys.getenv("LLTM_URL", unset = NA)) {
     on.exit(unlink(file), add = TRUE)
     download.file(url = url, destfile = file)
   } else {
+    message('Using file ', url)
     file <- url
   }
 
