@@ -4,3 +4,4 @@
 ^\.github$
 ^csrc$
 ^inst/lib$
+^README\.Rmd$
