@@ -22,7 +22,7 @@ NULL
       if (file.exists(pkgload))
         dyn.load(pkgload)
       else
-        library.dynam(pkg, pkg, lib)
+        library.dynam("lltm", pkg, lib)
     }
   }
 }
