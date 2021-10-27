@@ -58,6 +58,27 @@ In the extension side the actors are:
 
 [![](man/figures/high-level.png)](https://excalidraw.com/#json=6114208240369664,J9vJ8KK7VOBqgn7Nex5Huw)
 
+## Project structure
+
+-   **csrc**: The directory containing library that will call efficient
+    LibTorch code. See the section `csrc` for details.
+-   **src**: Rcpp code that interfaces the `csrc` library and exports
+    functionality to the R API.
+-   **R/package.R**: Definitions for correctly downloading pre-built
+    binaries, and dynamically loading the `csrc` library as well as the
+    C++ library.
+
+### csrc
+
+-   **CMakeLists.txt**: The first important file that you should get
+    familiar with in this directory is the
+    [CMakeLists.txt](https://github.com/mlverse/lltm/blob/main/csrc/CMakeLists.txt)
+    file. This is the [CMake](https://cmake.org/) configuration file
+    defining how the project must be compiled and its dependencies. You
+    can refer to comments in the
+    [file](https://github.com/mlverse/lltm/blob/main/csrc/CMakeLists.txt)
+    for almost line by line explanation of definitions.
+
 ## Installation
 
 ~~You can install the released version of lltm from
