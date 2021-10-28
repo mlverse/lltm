@@ -15,6 +15,8 @@ name: R-CMD-check
 jobs:
 
   Build-Libs:
+
+    if: github.ref == 'refs/heads/main'
     runs-on: ${{ matrix.config.os }}
 
     strategy:
