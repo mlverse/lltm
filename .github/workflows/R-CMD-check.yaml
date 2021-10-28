@@ -41,13 +41,13 @@ jobs:
           use-public-rspm: true
 
       - name: Install dependencies
-        run: Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE)"
+        run: Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE, INSTALL_opts='--no-multiarch')"
 
       - run: |
           cd csrc
           mkdir build && cd build
           cmake ..
-          cmake --build . --target package
+          cmake --build . --target package --config Release
 
       - uses: svenstaro/upload-release-action@v2
         with:
@@ -90,13 +90,13 @@ jobs:
 
 
       - run: |
-          Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE)"
+          Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE, INSTALL_opts='--no-multiarch')"
 
       - run: |
           cd csrc
           mkdir build && cd build
           cmake ..
-          cmake --build . --target package
+          cmake --build . --target package --config Release
           Rscript -e "cat('ZIP file:', normalizePath(list.files(pattern='zip', full.names=TRUE)))"
           Rscript -e "cat('ENV file:', Sys.getenv('GITHUB_ENV'))"
           Rscript -e "writeLines(paste0('LLTM_URL=',normalizePath(list.files(pattern='zip', full.names=TRUE))), Sys.getenv('GITHUB_ENV'))"
