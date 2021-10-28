@@ -45,7 +45,7 @@ jobs:
           cd csrc
           mkdir build && cd build
           cmake ..
-          cmake --build . --target package
+          cmake --build . --target package --config Release
 
       - uses: svenstaro/upload-release-action@v2
         with:
