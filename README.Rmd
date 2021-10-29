@@ -65,10 +65,7 @@ to the R API.
 - **R/package.R**: Definitions for correctly downloading pre-built binaries,
 and dynamically loading the `csrc` library as well as the C++ library.
 
-### csrc 
-
-> Implementing the operators and their C wrappers.
-
+### csrc: Implementing the operators and their C wrappers.
 
 - **CMakeLists.txt**: The first important file that you should get familiar with    in this directory is the [CMakeLists.txt](https://github.com/mlverse/lltm/blob/main/csrc/CMakeLists.txt) file. This is the [CMake](https://cmake.org/) configuration file defining how the
   project must be compiled and its dependencies. You can refer to comments in
@@ -161,8 +158,93 @@ and dynamically loading the `csrc` library as well as the C++ library.
                                  void* bias, void* old_h,
                                  void* old_cell);
   ```
+
+
+The library implemented in `csrc` can be compiled with CMake. We use the following
+commands to compile and install it locally:
+
+```
+cd csrc && mkdir build
+cmake .. && cmake --build . --target install --config Release
+```
+
+### src: Wrapping the library with Rcpp
+
+Now that we implemented the operators that we wanted to call from R, we can now
+implement the Rcpp wrappers that will allow us to call those operators from R.
+
+- **src/code.cpp**: In this file we implement the wrappers that takes R obejcts
+  and converts them to the correct C type that we need to pass to the C library.
+  Remember that the C library return `void*` pointers and we need to make sure to
+  free this objects when they are no longer in use, otherwise we will leak memory.
+  The `torch.h` headers provides Rcpp extension types that act like *smart pointers*
+  and make sure that the objects created in the C library are correctly freed when
+  they are no longer in use. The types implemented in `torch.h` also implement 
+  convertion from and to `SEXP`s so we don't need to implement them on our own.
   
+  ```cpp
+  // [[Rcpp::export]]
+  XPtrTorchTensorList lltm_forward (
+      XPtrTorchTensor input,
+      XPtrTorchTensor weights,
+      XPtrTorchTensor bias,
+      XPtrTorchTensor old_h,
+      XPtrTorchTensor old_cell)
+  {
+    return c_lltm_forward(
+      input.get(),
+      weights.get(),
+      bias.get(),
+      old_h.get(),
+      old_cell.get()
+    );
+  }
+  ```
   
+  In the above code chunk the `XPtrTorchTensor` type allow us to take torch tensors
+  directly from R. `XPtrTorchTensorList` will convert a `std::vector<torch::Tensor>`
+  into an R list. We use `.get()` to extract `void*` pointers from those objects and 
+  pass them to the `c_lltm_forward` function.
+  
+  The list of all types already implemented in torch is available [here](TODO). 
+  You might also look at their implementation if you need to implement a special
+  type for your package.
+  
+- **src/Makevars.win**: On Windows, the normal compilation workflow wouldn't work
+  as Windows wouldn't be able to find the implementations of `c_lltm_forward` (as it
+  only sees the headers), so we convert the `.def` file created in `csrc` to a `.lib`
+  file and use this as an argument to the linker. That's what `Makevars.win` implements.
+  In most cases you won't need to modify this file.
+  
+
+### R API
+
+Now the Rcpp wrappers are implemented and exported you have now access to `lltm_forward`
+in the R side.
+
+- **R/lltm.R**: In this package we wanted to provide a new autograd function and 
+  a `nn_module` that uses it and we implemented it in this file. This is normal
+  R code and we won't discuss the actual implementation. 
+
+## Packaging
+
+It's not trivial to package torch extensions because they can't be entirely built
+on CRAN machines. We would need to include pre-built binaries in the package tarball
+but for security reasons that's not accepted on CRAN.
+
+In this package we implement a suggested way of packaging torch extensions that makes
+it really easy for users to install your package without having to use custom
+installation steps or building libraries from source. The diagram below shows an
+overview of the packaging process.
+
+![](man/figures/packaging.png)
+
+- **R/package.R**: implements the suggested installation logic - including downloading
+  from GitHub Releases and dynamically loading the shared libraries.
+  
+- **.github/workflows/R-CMD-check.yaml**: the job called *Build-Libs* implements
+  the logic for building the binaries from `csrc` for each operating system and 
+  uploading to GH Releases.
 
 ## Installation
 
