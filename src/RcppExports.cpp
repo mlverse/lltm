@@ -11,20 +11,44 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// run
-XPtrTorchTensor run(XPtrTorchTensor x);
-RcppExport SEXP _lltm_run(SEXP xSEXP) {
+// lltm_forward
+XPtrTorchTensorList lltm_forward(XPtrTorchTensor input, XPtrTorchTensor weights, XPtrTorchTensor bias, XPtrTorchTensor old_h, XPtrTorchTensor old_cell);
+RcppExport SEXP _lltm_lltm_forward(SEXP inputSEXP, SEXP weightsSEXP, SEXP biasSEXP, SEXP old_hSEXP, SEXP old_cellSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtrTorchTensor >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(run(x));
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type input(inputSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type bias(biasSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type old_h(old_hSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type old_cell(old_cellSEXP);
+    rcpp_result_gen = Rcpp::wrap(lltm_forward(input, weights, bias, old_h, old_cell));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lltm_backward
+XPtrTorchTensorList lltm_backward(XPtrTorchTensor grad_h, XPtrTorchTensor grad_cell, XPtrTorchTensor new_cell, XPtrTorchTensor input_gate, XPtrTorchTensor output_gate, XPtrTorchTensor candidate_cell, XPtrTorchTensor X, XPtrTorchTensor gate_weights, XPtrTorchTensor weights);
+RcppExport SEXP _lltm_lltm_backward(SEXP grad_hSEXP, SEXP grad_cellSEXP, SEXP new_cellSEXP, SEXP input_gateSEXP, SEXP output_gateSEXP, SEXP candidate_cellSEXP, SEXP XSEXP, SEXP gate_weightsSEXP, SEXP weightsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type grad_h(grad_hSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type grad_cell(grad_cellSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type new_cell(new_cellSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type input_gate(input_gateSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type output_gate(output_gateSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type candidate_cell(candidate_cellSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type X(XSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type gate_weights(gate_weightsSEXP);
+    Rcpp::traits::input_parameter< XPtrTorchTensor >::type weights(weightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(lltm_backward(grad_h, grad_cell, new_cell, input_gate, output_gate, candidate_cell, X, gate_weights, weights));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_lltm_run", (DL_FUNC) &_lltm_run, 1},
+    {"_lltm_lltm_forward", (DL_FUNC) &_lltm_lltm_forward, 5},
+    {"_lltm_lltm_backward", (DL_FUNC) &_lltm_lltm_backward, 9},
     {NULL, NULL, 0}
 };
 

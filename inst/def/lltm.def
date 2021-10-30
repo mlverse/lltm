@@ -1,3 +1,4 @@
 LIBRARY LLTM
 EXPORTS
-  d_sigmoid
+  c_lltm_forward
+  c_lltm_backward
