@@ -41,8 +41,10 @@ target_include_directories(lltm PUBLIC
 )
 
 # Tell cmake the libraries we want to link to.
+message(STATUS "${TORCH_LIBRARIES}")
 target_link_libraries(lltm "${TORCH_LIBRARIES}")
-set_property(TARGET lltm PROPERTY CXX_STANDARD 14)
+
+set_property(TARGET lltm PROPERTY CXX_STANDARD 17)
 
 # Syncronize the headers and the def file with the Rcpp
 # interface.

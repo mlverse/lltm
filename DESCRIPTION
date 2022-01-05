@@ -18,7 +18,7 @@ LinkingTo:
 Imports: 
     Rcpp, torch
 Remotes:
-    mlverse/torch@feature/install-headers
+    mlverse/torch@feature/lantern-types
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

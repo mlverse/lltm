@@ -15,4 +15,3 @@ LLTM_API void* c_lltm_backward(void* grad_h, void* grad_cell, void* new_cell,
                                void* X, void* gate_weights, void* weights);
 
 
-
