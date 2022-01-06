@@ -123,6 +123,13 @@ In the extension side the actors are:
     Tensors we also cast them to `void*` pointers, making sure that what
     they point won’t be deleted after the function goes out of scope.
 
+    For the casting between `void*` into LibTorch types to be easier we
+    provide the `make_raw` and `from_raw` namespaces. Functions in these
+    namespaces are defined in the `lantern/types.h` header. For example,
+    if one wants to create a raw pointer from a torch Tensor, they would
+    use `make_raw::Tensor`. On the other side, if you want to covert a
+    raw pointer to a Tensor, you can use `from_raw::Tensor`.
+
     ``` cpp
     LLTM_API void* c_lltm_forward (void* input,
                                    void* weights,
@@ -131,14 +138,14 @@ In the extension side the actors are:
                                    void* old_cell) {
 
       std::vector<torch::Tensor> output = lltm_forward(
-        reinterpret_cast<LanternObject<torch::Tensor>*>(input)->get(),
-        reinterpret_cast<LanternObject<torch::Tensor>*>(weights)->get(),
-        reinterpret_cast<LanternObject<torch::Tensor>*>(bias)->get(),
-        reinterpret_cast<LanternObject<torch::Tensor>*>(old_h)->get(),
-        reinterpret_cast<LanternObject<torch::Tensor>*>(old_cell)->get()
+        from_raw::Tensor(input),
+        from_raw::Tensor(weights),
+        from_raw::Tensor(bias),
+        from_raw::Tensor(old_h),
+        from_raw::Tensor(old_cell))
       );
 
-      return (void*) new std::vector<torch::Tensor>(output);
+      return make_raw::TensorList(output);
     }
     ```
 
@@ -194,14 +201,17 @@ operators from R.
     implemented in `torch.h` also implement convertion from and to
     `SEXP`s so we don’t need to implement them on our own.
 
+    You can find all the available types in the `torch` namespace
+    available when you include `<torch.h>`.
+
     ``` cpp
     // [[Rcpp::export]]
-    XPtrTorchTensorList lltm_forward (
-        XPtrTorchTensor input,
-        XPtrTorchTensor weights,
-        XPtrTorchTensor bias,
-        XPtrTorchTensor old_h,
-        XPtrTorchTensor old_cell)
+    torch::TensorList lltm_forward (
+        torch::Tensor input,
+        torch::Tensor weights,
+        torch::Tensor bias,
+        torch::Tensor old_h,
+        torch::Tensor old_cell)
     {
       return c_lltm_forward(
         input.get(),
@@ -213,8 +223,8 @@ operators from R.
     }
     ```
 
-    In the above code chunk the `XPtrTorchTensor` type allow us to take
-    torch tensors directly from R. `XPtrTorchTensorList` will convert a
+    In the above code chunk the `torch::Tensor` type allow us to take
+    torch tensors directly from R. `torch::TensorList` will convert a
     `std::vector<torch::Tensor>` into an R list. We use `.get()` to
     extract `void*` pointers from those objects and pass them to the
     `c_lltm_forward` function.
@@ -277,13 +287,4 @@ And the development version from [GitHub](https://github.com/) with:
 ``` r
 # install.packages("devtools")
 devtools::install_github("mlverse/lltm")
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-## library(lltm)
-## basic example code
 ```
