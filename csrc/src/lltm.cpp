@@ -1,28 +1,9 @@
 #include <torch/torch.h>
+#define LANTERN_TYPES_IMPL // Should be defined only in a single file.
+#include <lantern/types.h>
 #include <iostream>
 #include <vector>
 #include "lltm/lltm.h"
-
-template <class T>
-class LanternObject
-{
-private:
-  T _object;
-
-public:
-  LanternObject(T object) : _object(std::forward<T>(object))
-  {
-  }
-
-  LanternObject()
-  {
-  }
-
-  T &get()
-  {
-    return _object;
-  }
-};
 
 torch::Tensor d_sigmoid(torch::Tensor z) {
   auto s = torch::sigmoid(z);
@@ -105,21 +86,19 @@ std::vector<torch::Tensor> lltm_backward(
   return {d_old_h, d_input, d_weights, d_bias, d_old_cell};
 }
 
-
 LLTM_API void* c_lltm_forward (void* input,
                                void* weights,
                                void* bias,
                                void* old_h,
                                void* old_cell) {
-  std::vector<torch::Tensor> output = lltm_forward(
-    reinterpret_cast<LanternObject<torch::Tensor>*>(input)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(weights)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(bias)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(old_h)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(old_cell)->get()
+  auto result = lltm_forward(
+    from_raw::Tensor(input),
+    from_raw::Tensor(weights),
+    from_raw::Tensor(bias),
+    from_raw::Tensor(old_h),
+    from_raw::Tensor(old_cell)
   );
-
-  return (void*) new std::vector<torch::Tensor>(output);
+  return make_raw::TensorList(result);
 }
 
 LLTM_API void* c_lltm_backward(
@@ -133,17 +112,17 @@ LLTM_API void* c_lltm_backward(
     void* gate_weights,
     void* weights) {
 
-  std::vector<torch::Tensor> output = lltm_backward(
-    reinterpret_cast<LanternObject<torch::Tensor>*>(grad_h)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(grad_cell)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(new_cell)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(input_gate)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(output_gate)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(candidate_cell)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(X)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(gate_weights)->get(),
-    reinterpret_cast<LanternObject<torch::Tensor>*>(weights)->get()
+  auto result = lltm_backward(
+    from_raw::Tensor(grad_h),
+    from_raw::Tensor(grad_cell),
+    from_raw::Tensor(new_cell),
+    from_raw::Tensor(input_gate),
+    from_raw::Tensor(output_gate),
+    from_raw::Tensor(candidate_cell),
+    from_raw::Tensor(X),
+    from_raw::Tensor(gate_weights),
+    from_raw::Tensor(weights)
   );
 
-  return (void*) new std::vector<torch::Tensor>(output);
+  return make_raw::TensorList(result);
 }

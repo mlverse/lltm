@@ -8,12 +8,12 @@
 
 
 // [[Rcpp::export]]
-XPtrTorchTensorList lltm_forward (
-    XPtrTorchTensor input,
-    XPtrTorchTensor weights,
-    XPtrTorchTensor bias,
-    XPtrTorchTensor old_h,
-    XPtrTorchTensor old_cell)
+torch::TensorList lltm_forward (
+    torch::Tensor input,
+    torch::Tensor weights,
+    torch::Tensor bias,
+    torch::Tensor old_h,
+    torch::Tensor old_cell)
 {
   return c_lltm_forward(
     input.get(),
@@ -25,16 +25,16 @@ XPtrTorchTensorList lltm_forward (
 }
 
 // [[Rcpp::export]]
-XPtrTorchTensorList lltm_backward (
-    XPtrTorchTensor grad_h,
-    XPtrTorchTensor grad_cell,
-    XPtrTorchTensor new_cell,
-    XPtrTorchTensor input_gate,
-    XPtrTorchTensor output_gate,
-    XPtrTorchTensor candidate_cell,
-    XPtrTorchTensor X,
-    XPtrTorchTensor gate_weights,
-    XPtrTorchTensor weights)
+torch::TensorList lltm_backward (
+    torch::Tensor grad_h,
+    torch::Tensor grad_cell,
+    torch::Tensor new_cell,
+    torch::Tensor input_gate,
+    torch::Tensor output_gate,
+    torch::Tensor candidate_cell,
+    torch::Tensor X,
+    torch::Tensor gate_weights,
+    torch::Tensor weights)
 {
   return c_lltm_backward(
     grad_h.get(),
@@ -48,4 +48,3 @@ XPtrTorchTensorList lltm_backward (
     weights.get()
   );
 }
-

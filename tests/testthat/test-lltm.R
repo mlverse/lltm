@@ -9,6 +9,8 @@ test_that("multiplication works", {
 
   rnn = nn_lltm(input_features, state_size)
 
+
+
   out = rnn(X, list(h, C))
   l <- out[[1]]$sum() + out[[2]]$sum()
   l$backward()
