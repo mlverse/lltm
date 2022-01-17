@@ -5,6 +5,32 @@
 #include <vector>
 #include "lltm/lltm.h"
 
+std::string *p_lltm_last_error = NULL;
+
+// https://stackoverflow.com/questions/40487123/how-to-wrap-calls-with-try-catch-block
+#define HANDLE_LLTM_EXCEPTION(...)                              \
+[&]() -> decltype(auto) {                                       \
+  try {                                                         \
+    return __VA_ARGS__;                                         \
+  } catch(const std::exception& ex) {                           \
+    p_lltm_last_error = new std::string(ex.what());             \
+  } catch (std::string& ex) {                                   \
+    p_lltm_last_error = new std::string(ex);                    \
+  } catch (...) {                                               \
+    p_lltm_last_error = new std::string("Unknown error. ");     \
+  }                                                             \
+  return (void*)nullptr;                                        \
+}()                                                            \
+
+#define HANDLE_EXCEPTION                                       \
+catch(const std::exception& ex) {                             \
+  p_lltm_last_error = new std::string(ex.what());             \
+} catch (std::string& ex) {                                   \
+  p_lltm_last_error = new std::string(ex);                    \
+} catch (...) {                                               \
+  p_lltm_last_error = new std::string("Unknown error. ");     \
+}
+
 torch::Tensor d_sigmoid(torch::Tensor z) {
   auto s = torch::sigmoid(z);
   return (1 - s) * s;
@@ -86,19 +112,21 @@ std::vector<torch::Tensor> lltm_backward(
   return {d_old_h, d_input, d_weights, d_bias, d_old_cell};
 }
 
-LLTM_API void* c_lltm_forward (void* input,
-                               void* weights,
-                               void* bias,
-                               void* old_h,
-                               void* old_cell) {
-  auto result = lltm_forward(
-    from_raw::Tensor(input),
-    from_raw::Tensor(weights),
-    from_raw::Tensor(bias),
-    from_raw::Tensor(old_h),
-    from_raw::Tensor(old_cell)
-  );
-  return make_raw::TensorList(result);
+void* _c_lltm_forward (void* input,
+                       void* weights,
+                       void* bias,
+                       void* old_h,
+                       void* old_cell) noexcept {
+  try {
+    return make_raw::TensorList(lltm_forward(
+        from_raw::Tensor(input),
+        from_raw::Tensor(weights),
+        from_raw::Tensor(bias),
+        from_raw::Tensor(old_h),
+        from_raw::Tensor(old_cell)
+    ));
+  } HANDLE_EXCEPTION
+  return (void*) nullptr;
 }
 
 LLTM_API void* c_lltm_backward(

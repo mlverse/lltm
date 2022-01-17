@@ -11,7 +11,7 @@ Description: Implements the Long Long Term Memory Neural Network Cells ('LLTM').
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-SystemRequirements: C++11
+SystemRequirements: C++14
 RoxygenNote: 7.1.1
 LinkingTo: 
     Rcpp, torch
