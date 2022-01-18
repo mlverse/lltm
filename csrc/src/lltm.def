@@ -1,4 +1,6 @@
 LIBRARY LLTM
 EXPORTS
-  c_lltm_forward
+  lltm_last_error
+  lltm_last_error_clear
+  _c_lltm_forward
   c_lltm_backward
