@@ -5,7 +5,6 @@
 #include <vector>
 #include "lltm/lltm.h"
 
-std::string *p_lltm_last_error = NULL;
 
 // https://stackoverflow.com/questions/40487123/how-to-wrap-calls-with-try-catch-block
 #define HANDLE_LLTM_EXCEPTION(...)                              \
