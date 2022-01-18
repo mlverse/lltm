@@ -4,3 +4,4 @@ EXPORTS
   lltm_last_error_clear
   _c_lltm_forward
   c_lltm_backward
+  _raise_exception

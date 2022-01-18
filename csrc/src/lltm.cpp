@@ -23,11 +23,11 @@
 
 #define HANDLE_EXCEPTION                                       \
 catch(const std::exception& ex) {                             \
-  p_lltm_last_error = new std::string(ex.what());             \
+  p_lltm_last_error = make_raw::string(ex.what());             \
 } catch (std::string& ex) {                                   \
-  p_lltm_last_error = new std::string(ex);                    \
+  p_lltm_last_error = make_raw::string(ex);                    \
 } catch (...) {                                               \
-  p_lltm_last_error = new std::string("Unknown error. ");     \
+  p_lltm_last_error = make_raw::string("Unknown error. ");     \
 }
 
 torch::Tensor d_sigmoid(torch::Tensor z) {
@@ -152,4 +152,12 @@ LLTM_API void* c_lltm_backward(
   );
 
   return make_raw::TensorList(result);
+}
+
+LLTM_API int _raise_exception ()
+{
+  try {
+    throw std::runtime_error("Error from LLTM");
+  } HANDLE_EXCEPTION
+  return 1;
 }

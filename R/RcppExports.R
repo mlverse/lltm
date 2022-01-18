@@ -9,3 +9,7 @@ lltm_backward <- function(grad_h, grad_cell, new_cell, input_gate, output_gate, 
     .Call('_lltm_lltm_backward', PACKAGE = 'lltm', grad_h, grad_cell, new_cell, input_gate, output_gate, candidate_cell, X, gate_weights, weights)
 }
 
+lltm_raise_exception <- function() {
+    invisible(.Call('_lltm_lltm_raise_exception', PACKAGE = 'lltm'))
+}
+

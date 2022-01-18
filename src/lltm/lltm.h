@@ -8,21 +8,6 @@
 #define LLTM_API extern "C"
 #endif
 
-// https://github.com/mlverse/torch/blob/5468117a8d5d49d77aeb690e2a1121292cd97213/inst/include/utils.h#L11-L30
-template <typename F>
-class ScopeGuard {
-public:
-  explicit ScopeGuard(F&& f) noexcept : f_(std::forward<F>(f)) {}
-  ~ScopeGuard() noexcept { f_(); }
-private:
-  typename std::decay<F>::type f_;
-};
-
-template <typename F>
-ScopeGuard<F> makeScopeGuard(F&& f) {
-  return ScopeGuard<F>(std::forward<F>(f));
-}
-
 void host_exception_handler ();
 extern void* p_lltm_last_error;
 
@@ -36,12 +21,16 @@ extern void* p_lltm_last_error;
 // executing the C function.
 // Use this function by wrapping your C function into it.
 // This adds C++14 dependency. If the C++ dependency is really undesirable you
-// can be more verbose declare a function with the same signature that does what
-// what you want.
+// can be more verbose declaring a function with the same signature that calls
+// the C interface, and calls host_exception_handler() before returning. Note:
+// `host_exception_handler()` might raise exceptions so it's not a good idea to
+// call it in ScopeGuards or similar strategies.
+// Also this function only works if the wrapped function doesn't return void.
 auto handle_exceptions = [](const auto& f) {
   return [&](auto ... params) {
-    auto sg = makeScopeGuard(host_exception_handler);
-    return f(params...);
+    auto ret = f(params...);
+    host_exception_handler();
+    return ret;
   };
 };
 
@@ -55,5 +44,9 @@ static auto c_lltm_forward = handle_exceptions(_c_lltm_forward);
 LLTM_API void* c_lltm_backward (void* grad_h, void* grad_cell, void* new_cell,
                                 void* input_gate, void* output_gate, void* candidate_cell,
                                 void* X, void* gate_weights, void* weights);
+
+LLTM_API int _raise_exception ();
+static auto raise_exception = handle_exceptions(_raise_exception);
+
 
 
