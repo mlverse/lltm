@@ -20,7 +20,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 # If you want to separate your implementation in multiple files
 # add their paths after `src/lltm.cpp`, the spearator is a simple
 # space.
-set(LLTM_SRC src/lltm.cpp)
+set(LLTM_SRC src/lltm.cpp src/utils.cpp)
 
 # On Windows we use module definition files to declare what are
 # the exported functions from the library. It's similar to the

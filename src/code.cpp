@@ -48,3 +48,9 @@ torch::TensorList lltm_backward (
     weights.get()
   );
 }
+
+// [[Rcpp::export]]
+void lltm_raise_exception ()
+{
+  raise_exception();
+}

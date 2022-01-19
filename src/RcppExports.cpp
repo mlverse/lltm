@@ -45,10 +45,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lltm_raise_exception
+void lltm_raise_exception();
+RcppExport SEXP _lltm_lltm_raise_exception() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    lltm_raise_exception();
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_lltm_lltm_forward", (DL_FUNC) &_lltm_lltm_forward, 5},
     {"_lltm_lltm_backward", (DL_FUNC) &_lltm_lltm_backward, 9},
+    {"_lltm_lltm_raise_exception", (DL_FUNC) &_lltm_lltm_raise_exception, 0},
     {NULL, NULL, 0}
 };
 

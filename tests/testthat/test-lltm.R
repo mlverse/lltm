@@ -18,3 +18,9 @@ test_that("multiplication works", {
   expect_equal(rnn$weights$grad$shape, c(384, 160))
   expect_equal(rnn$bias$grad$shape, c(384))
 })
+
+test_that("raise exceptions", {
+
+  expect_error(lltm_raise_exception(), "Error from LLTM")
+
+})
