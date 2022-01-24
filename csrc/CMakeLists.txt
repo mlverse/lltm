@@ -20,7 +20,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 # If you want to separate your implementation in multiple files
 # add their paths after `src/lltm.cpp`, the spearator is a simple
 # space.
-set(LLTM_SRC src/lltm.cpp src/utils.cpp)
+set(LLTM_SRC src/lltm.cpp src/exports.cpp)
+set(LLTM_HEADERS include/lltm/lltm.h include/lltm/exports.h)
 
 # On Windows we use module definition files to declare what are
 # the exported functions from the library. It's similar to the
@@ -39,6 +40,8 @@ add_library(lltm::library ALIAS lltm)
 target_include_directories(lltm PUBLIC
     ${PROJECT_SOURCE_DIR}/include
 )
+set_property(TARGET lltm
+ PROPERTY PUBLIC_HEADER ${LLTM_HEADERS})
 
 # Tell cmake the libraries we want to link to.
 message(STATUS "${TORCH_LIBRARIES}")
@@ -46,18 +49,18 @@ target_link_libraries(lltm "${TORCH_LIBRARIES}")
 
 set_property(TARGET lltm PROPERTY CXX_STANDARD 17)
 
+add_custom_target(lltm_export
+    COMMAND Rscript -e 'torchexport::export()'
+    COMMENT "Regenerating export code."
+)
+add_dependencies(lltm lltm_export)
+
 # Syncronize the headers and the def file with the Rcpp
 # interface.
 add_custom_command(TARGET lltm POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/lltm.def ${PROJECT_SOURCE_DIR}/../inst/def/lltm.def
     COMMENT "Copied def file to inst folder."
 )
-
-add_custom_command(TARGET lltm POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/include/lltm/lltm.h ${PROJECT_SOURCE_DIR}/../src/lltm/lltm.h
-    COMMENT "Copied lltm.h file to src folder."
-)
-
 
 # Set CPack related code to automatically generate installation bundles.
 # The bundle name will have the same version as defined in the R DESCRIPTION
@@ -81,4 +84,4 @@ install(TARGETS lltm DESTINATION lib)
 include(CPack)
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/../inst)
-install(TARGETS lltm DESTINATION lib)
+install(TARGETS lltm LIBRARY PUBLIC_HEADER DESTINATION include/lltm)

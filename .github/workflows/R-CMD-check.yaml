@@ -41,7 +41,9 @@ jobs:
           use-public-rspm: true
 
       - name: Install dependencies
-        run: Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE, INSTALL_opts='--no-multiarch')"
+        run: |
+          Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE, INSTALL_opts='--no-multiarch')"
+          Rscript -e "remotes::install_github('mlverse/torchexport')"
 
       - run: |
           cd csrc
@@ -70,6 +72,7 @@ jobs:
           - {os: macOS-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-18.04,   r: 'release'}
+          - {os: windows-latest, r: '3.6'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -90,6 +93,7 @@ jobs:
 
       - run: |
           Rscript -e "install.packages(c('remotes', 'desc', 'rcmdcheck'))" -e "remotes::install_deps(dependencies = TRUE, INSTALL_opts='--no-multiarch')"
+          Rscript -e "remotes::install_github('mlverse/torchexport')"
 
       - run: |
           cd csrc
