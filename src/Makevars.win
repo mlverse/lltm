@@ -19,4 +19,3 @@ lltm: clean
 clean:
 	rm -rf lltm.lib
 
-CXX_STD = CXX14
