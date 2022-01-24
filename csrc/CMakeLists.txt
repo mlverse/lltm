@@ -52,6 +52,7 @@ set_property(TARGET lltm PROPERTY CXX_STANDARD 17)
 add_custom_target(lltmExport
   COMMAND Rscript -e "torchexport::export()"
   COMMENT "Regenerating export code."
+  VERBATIM
 )
 add_dependencies(lltm lltmExport)
 
@@ -80,7 +81,6 @@ else()
 endif()
 
 
-install(TARGETS lltm DESTINATION lib)
 include(CPack)
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/../inst)
