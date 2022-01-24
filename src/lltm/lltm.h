@@ -26,7 +26,7 @@ extern void* p_lltm_last_error;
 // `host_exception_handler()` might raise exceptions so it's not a good idea to
 // call it in ScopeGuards or similar strategies.
 // Also this function only works if the wrapped function doesn't return void.
-auto handle_exceptions = [](const auto& f) {
+inline auto handle_exceptions = [](const auto& f) {
   return [&](auto ... params) {
     auto ret = f(params...);
     host_exception_handler();
