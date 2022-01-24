@@ -40,7 +40,7 @@ lib_path <- function() {
   if (.Platform$OS.type == "unix") {
     file.path(install_path, "lib", paste0("liblltm", lib_ext()))
   } else {
-    file.path(install_path, "lib", paste0("lltm", lib_ext()))
+    file.path(install_path, "bin", paste0("lltm", lib_ext()))
   }
 }
 
