@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 #include <iostream>
 #define LLTM_HEADERS_ONLY
-#include "lltm/lltm.h"
+#include <lltm/lltm.h>
 #include <torch.h>
 
 void host_exception_handler ()

@@ -1,3 +1,5 @@
+PKG_CPPFLAGS = -I../inst/include/
+
 PKG_LIBS=\
 	-L. \
   -llltm
@@ -17,4 +19,3 @@ lltm: clean
 clean:
 	rm -rf lltm.lib
 
-CXX_STD = CXX14

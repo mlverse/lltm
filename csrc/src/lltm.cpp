@@ -111,24 +111,23 @@ std::vector<torch::Tensor> lltm_backward(
   return {d_old_h, d_input, d_weights, d_bias, d_old_cell};
 }
 
-void* _c_lltm_forward (void* input,
-                       void* weights,
-                       void* bias,
-                       void* old_h,
-                       void* old_cell) noexcept {
-  try {
-    return make_raw::TensorList(lltm_forward(
-        from_raw::Tensor(input),
-        from_raw::Tensor(weights),
-        from_raw::Tensor(bias),
-        from_raw::Tensor(old_h),
-        from_raw::Tensor(old_cell)
-    ));
-  } HANDLE_EXCEPTION
-  return (void*) nullptr;
+// [[ torch::export ]]
+void* c_lltm_forward(void* input,
+                     void* weights,
+                     void* bias,
+                     void* old_h,
+                     void* old_cell) {
+  return make_raw::TensorList(lltm_forward(
+      from_raw::Tensor(input),
+      from_raw::Tensor(weights),
+      from_raw::Tensor(bias),
+      from_raw::Tensor(old_h),
+      from_raw::Tensor(old_cell)
+  ));
 }
 
-LLTM_API void* c_lltm_backward(
+// [[ torch::export ]]
+void* c_lltm_backward(
     void* grad_h,
     void* grad_cell,
     void* new_cell,
