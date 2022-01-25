@@ -5,37 +5,13 @@
 #include <vector>
 #include "lltm/lltm.h"
 
-
-// https://stackoverflow.com/questions/40487123/how-to-wrap-calls-with-try-catch-block
-#define HANDLE_LLTM_EXCEPTION(...)                              \
-[&]() -> decltype(auto) {                                       \
-  try {                                                         \
-    return __VA_ARGS__;                                         \
-  } catch(const std::exception& ex) {                           \
-    p_lltm_last_error = new std::string(ex.what());             \
-  } catch (std::string& ex) {                                   \
-    p_lltm_last_error = new std::string(ex);                    \
-  } catch (...) {                                               \
-    p_lltm_last_error = new std::string("Unknown error. ");     \
-  }                                                             \
-  return (void*)nullptr;                                        \
-}()                                                            \
-
-#define HANDLE_EXCEPTION                                       \
-catch(const std::exception& ex) {                             \
-  p_lltm_last_error = make_raw::string(ex.what());             \
-} catch (std::string& ex) {                                   \
-  p_lltm_last_error = make_raw::string(ex);                    \
-} catch (...) {                                               \
-  p_lltm_last_error = make_raw::string("Unknown error. ");     \
-}
-
 torch::Tensor d_sigmoid(torch::Tensor z) {
   auto s = torch::sigmoid(z);
   return (1 - s) * s;
 }
 
-std::vector<at::Tensor> lltm_forward(
+// [[torch::export]]
+std::vector<torch::Tensor> lltm_forward(
     torch::Tensor input,
     torch::Tensor weights,
     torch::Tensor bias,
@@ -74,6 +50,7 @@ torch::Tensor d_elu(torch::Tensor z, torch::Scalar alpha = 1.0) {
   return (z > 0).type_as(z) + mask.type_as(z) * (alpha * e);
 }
 
+// [[torch::export]]
 std::vector<torch::Tensor> lltm_backward(
     torch::Tensor grad_h,
     torch::Tensor grad_cell,
@@ -111,52 +88,10 @@ std::vector<torch::Tensor> lltm_backward(
   return {d_old_h, d_input, d_weights, d_bias, d_old_cell};
 }
 
-// [[ torch::export ]]
-void* c_lltm_forward(void* input,
-                     void* weights,
-                     void* bias,
-                     void* old_h,
-                     void* old_cell) {
-  return make_raw::TensorList(lltm_forward(
-      from_raw::Tensor(input),
-      from_raw::Tensor(weights),
-      from_raw::Tensor(bias),
-      from_raw::Tensor(old_h),
-      from_raw::Tensor(old_cell)
-  ));
-}
-
-// [[ torch::export ]]
-void* c_lltm_backward(
-    void* grad_h,
-    void* grad_cell,
-    void* new_cell,
-    void* input_gate,
-    void* output_gate,
-    void* candidate_cell,
-    void* X,
-    void* gate_weights,
-    void* weights) {
-
-  auto result = lltm_backward(
-    from_raw::Tensor(grad_h),
-    from_raw::Tensor(grad_cell),
-    from_raw::Tensor(new_cell),
-    from_raw::Tensor(input_gate),
-    from_raw::Tensor(output_gate),
-    from_raw::Tensor(candidate_cell),
-    from_raw::Tensor(X),
-    from_raw::Tensor(gate_weights),
-    from_raw::Tensor(weights)
-  );
-
-  return make_raw::TensorList(result);
-}
-
 LLTM_API int _raise_exception ()
 {
   try {
     throw std::runtime_error("Error from LLTM");
-  } HANDLE_EXCEPTION
+  } LLTM_HANDLE_EXCEPTION
   return 1;
 }
