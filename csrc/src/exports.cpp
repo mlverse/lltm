@@ -13,17 +13,17 @@ LLTM_API void lltm_last_error_clear()
   p_lltm_last_error = NULL;
 }
 
-void* c_lltm_forward (void* input, void* weights, void* bias, void* old_h, void* old_cell);
-LLTM_API void* _c_lltm_forward (void* input, void* weights, void* bias, void* old_h, void* old_cell) {
+std::vector<torch::Tensor> lltm_forward (torch::Tensor input, torch::Tensor weights, torch::Tensor bias, torch::Tensor old_h, torch::Tensor old_cell);
+LLTM_API void* _lltm_forward (void* input, void* weights, void* bias, void* old_h, void* old_cell) {
   try {
-    return  c_lltm_forward(input, weights, bias, old_h, old_cell);
+    return  make_raw::TensorList(lltm_forward(from_raw::Tensor(input), from_raw::Tensor(weights), from_raw::Tensor(bias), from_raw::Tensor(old_h), from_raw::Tensor(old_cell)));
   } LLTM_HANDLE_EXCEPTION
   return ( void* ) NULL;
 }
-void* c_lltm_backward (void* grad_h, void* grad_cell, void* new_cell, void* input_gate, void* output_gate, void* candidate_cell, void* X, void* gate_weights, void* weights);
-LLTM_API void* _c_lltm_backward (void* grad_h, void* grad_cell, void* new_cell, void* input_gate, void* output_gate, void* candidate_cell, void* X, void* gate_weights, void* weights) {
+std::vector<torch::Tensor> lltm_backward (torch::Tensor grad_h, torch::Tensor grad_cell, torch::Tensor new_cell, torch::Tensor input_gate, torch::Tensor output_gate, torch::Tensor candidate_cell, torch::Tensor X, torch::Tensor gate_weights, torch::Tensor weights);
+LLTM_API void* _lltm_backward (void* grad_h, void* grad_cell, void* new_cell, void* input_gate, void* output_gate, void* candidate_cell, void* X, void* gate_weights, void* weights) {
   try {
-    return  c_lltm_backward(grad_h, grad_cell, new_cell, input_gate, output_gate, candidate_cell, X, gate_weights, weights);
+    return  make_raw::TensorList(lltm_backward(from_raw::Tensor(grad_h), from_raw::Tensor(grad_cell), from_raw::Tensor(new_cell), from_raw::Tensor(input_gate), from_raw::Tensor(output_gate), from_raw::Tensor(candidate_cell), from_raw::Tensor(X), from_raw::Tensor(gate_weights), from_raw::Tensor(weights)));
   } LLTM_HANDLE_EXCEPTION
   return ( void* ) NULL;
 }

@@ -1,6 +1,6 @@
 lltm_function <- torch::autograd_function(
   forward = function(ctx, input, weights, bias, old_h, old_cell) {
-    outputs <- lltm_forward(input, weights, bias, old_h, old_cell)
+    outputs <- rcpp_lltm_forward(input, weights, bias, old_h, old_cell)
     names(outputs) <- c("new_h", "new_cell", "input_gate", "output_gate",
                         "candidate_cell", "X", "gate_weights")
 
@@ -10,7 +10,7 @@ lltm_function <- torch::autograd_function(
     outputs[c("new_h", "new_cell")]
   },
   backward = function(ctx, grad_h, grad_cell) {
-    outputs <- lltm_backward(
+    outputs <- rcpp_lltm_backward(
       grad_h = grad_h$contiguous(),
       grad_cell = grad_cell$contiguous(),
       new_cell = ctx$saved_variables$new_cell,
